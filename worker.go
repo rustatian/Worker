@@ -6,25 +6,27 @@ import (
 )
 
 type Work struct {
-	f       func(interface{})
-	running int
-	sync.Mutex
+	f         func(interface{})
+	running   int
 	items     map[interface{}]bool
 	inQueue   []interface{}
-	cond      sync.Cond
+	cond      *sync.Cond
 	waitToRun int
 }
 
-func (w *Work) initialize() {
+func (w *Work) init() {
 	if w.items == nil {
 		w.items = make(map[interface{}]bool)
 	}
-	//w.cond = *sync.NewCond(w)
+
+	if w.cond == nil {
+		w.cond = sync.NewCond(&sync.Mutex{})
+	}
 }
 
 func (w *Work) Add(item interface{}) {
-	w.Lock()
-	w.initialize()
+	w.init()
+	w.cond.L.Lock()
 
 	if !w.items[item] {
 		w.items[item] = true
@@ -34,7 +36,7 @@ func (w *Work) Add(item interface{}) {
 			w.cond.Signal()
 		}
 	}
-	w.Unlock()
+	w.cond.L.Unlock()
 }
 
 func (w *Work) Run(n int, f func(item interface{})) {
@@ -48,9 +50,8 @@ func (w *Work) Run(n int, f func(item interface{})) {
 
 	w.running = n
 	w.f = f
-	w.cond.L = w
 
-	for i:=0; i < n-1; i ++ {
+	for i := 0; i < n-1; i++ {
 		go w.worker()
 	}
 
@@ -59,14 +60,16 @@ func (w *Work) Run(n int, f func(item interface{})) {
 
 func (w *Work) worker() {
 	for {
-		w.Lock()
+		w.cond.L.Lock()
+
 		for len(w.inQueue) == 0 {
-			w.waitToRun ++
+			w.waitToRun++
 
 			//
 			if w.waitToRun == w.running {
 				w.cond.Broadcast()
-				w.Unlock()
+
+				w.cond.L.Unlock()
 				return
 			}
 
@@ -80,8 +83,8 @@ func (w *Work) worker() {
 		// cut
 		w.inQueue[cur] = w.inQueue[len(w.inQueue)-1]
 		w.inQueue = w.inQueue[:len(w.inQueue)-1]
-		w.Unlock()
 
+		w.cond.L.Unlock()
 		// run
 		w.f(item)
 	}
