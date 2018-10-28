@@ -6,12 +6,12 @@ import (
 )
 
 type Work struct {
-	f         func(interface{})
-	running   int
-	items     map[interface{}]bool
-	inQueue   []interface{}
-	cond      *sync.Cond
-	waitToRun int
+	f       func(interface{})
+	total   int
+	items   map[interface{}]bool
+	inQueue []interface{}
+	cond    *sync.Cond
+	todo    int
 }
 
 func (w *Work) init() {
@@ -20,7 +20,7 @@ func (w *Work) init() {
 	}
 
 	if w.cond == nil {
-		w.cond = sync.NewCond(&sync.Mutex{})
+		w.cond = sync.NewCond(&sync.RWMutex{})
 	}
 }
 
@@ -32,7 +32,7 @@ func (w *Work) Add(item interface{}) {
 		w.items[item] = true
 		w.inQueue = append(w.inQueue, item)
 
-		if w.waitToRun > 0 {
+		if w.todo > 0 {
 			w.cond.Signal()
 		}
 	}
@@ -44,11 +44,11 @@ func (w *Work) Run(n int, f func(item interface{})) {
 		panic("n < 1")
 	}
 
-	if w.running >= 1 {
+	if w.total >= 1 {
 		panic("already called")
 	}
 
-	w.running = n
+	w.total = n
 	w.f = f
 
 	for i := 0; i < n-1; i++ {
@@ -63,18 +63,17 @@ func (w *Work) worker() {
 		w.cond.L.Lock()
 
 		for len(w.inQueue) == 0 {
-			w.waitToRun++
+			w.todo++
 
 			//
-			if w.waitToRun == w.running {
+			if w.todo == w.total {
 				w.cond.Broadcast()
-
 				w.cond.L.Unlock()
 				return
 			}
 
 			w.cond.Wait()
-			w.waitToRun--
+			w.todo--
 		}
 
 		cur := rand.Intn(len(w.inQueue))
