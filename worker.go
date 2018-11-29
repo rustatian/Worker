@@ -14,6 +14,7 @@ type Work struct {
 	todo    int
 }
 
+// init the worker
 func (w *Work) init() {
 	if w.items == nil {
 		w.items = make(map[interface{}]bool)
@@ -24,6 +25,7 @@ func (w *Work) init() {
 	}
 }
 
+//
 func (w *Work) Add(item interface{}) {
 	w.init()
 	w.cond.L.Lock()
