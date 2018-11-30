@@ -3,6 +3,7 @@
 Worker uses sync.Cond instead of channels.
 
 Installing:
+
 ``go get -u github.com/ValeryPiashchynski/Worker`` 
 
 
