@@ -1,6 +1,12 @@
 # Worker
 
-Worker uses sync.Cond instead of channels. Sample of usage:
+Worker uses sync.Cond instead of channels.
+
+Installing:
+``go get -u github.com/ValeryPiashchynski/Worker`` 
+
+
+Sample of usage:
 
 ```go
 package main
@@ -27,6 +33,7 @@ func main() {
 
     // Run the work in 10 goroutines (for example)
     // So, we know, that we working with strings, and we need to make type assertion
+    // Each task will be handled by separate goroutine
 	w.Run(10, func(item interface{}) {
 		str := item.(string)
 
@@ -46,3 +53,7 @@ func main() {
 	})
 }
 ``` 
+
+Valery Piashchynski
+
+https://SpiralScout.com
