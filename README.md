@@ -4,7 +4,7 @@ Worker uses sync.Cond instead of channels.
 
 Installing:
 
-``go get -u github.com/ValeryPiashchynski/Worker`` 
+``go get -u github.com/48d90782/Worker`` 
 
 
 Sample of usage:
@@ -14,7 +14,7 @@ package main
 
 import (
 	"fmt"
-	"github.com/ValeryPiashchynski/Worker"
+	"github.com/48d90782/Worker"
 	"io/ioutil"
 	"net/http"
 	"runtime"
@@ -54,7 +54,3 @@ func main() {
 	})
 }
 ``` 
-
-Valery Piashchynski
-
-https://SpiralScout.com
