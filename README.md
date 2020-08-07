@@ -1,6 +1,6 @@
 # Worker
 
-Worker uses sync.Cond instead of channels.
+Worker which uses sync.Cond instead of channels.
 
 Installing:
 
