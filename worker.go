@@ -21,7 +21,7 @@ func (w *Work) init() {
 	}
 
 	if w.cond == nil {
-		w.cond = sync.NewCond(&sync.RWMutex{})
+		w.cond = sync.NewCond(&sync.Mutex{})
 	}
 }
 
