@@ -1,3 +1,3 @@
-module github.com/ValeryPiashchynski/Worker
+module github.com/rustatian/Worker
 
-go 1.15
+go 1.16
