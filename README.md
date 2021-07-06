@@ -4,7 +4,7 @@ Worker, which uses sync.Cond instead of channels.
 
 Installing:
 
-``go get -u github.com/48d90782/Worker`` 
+``go get -u github.com/rustatian/Worker`` 
 
 
 Sample of usage:
