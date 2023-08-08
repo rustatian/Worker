@@ -14,7 +14,7 @@ package main
 
 import (
 	"fmt"
-	"github.com/48d90782/Worker"
+	"github.com/rustatian/Worker"
 	"io/ioutil"
 	"net/http"
 	"runtime"
