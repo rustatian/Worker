@@ -6,10 +6,10 @@ import (
 )
 
 type Work struct {
-	f       func(interface{})
+	f       func(any)
 	total   int
-	items   map[interface{}]bool
-	inQueue []interface{}
+	items   map[any]bool
+	inQueue []any
 	cond    *sync.Cond
 	todo    int
 }
@@ -17,7 +17,7 @@ type Work struct {
 // init the worker
 func (w *Work) init() {
 	if w.items == nil {
-		w.items = make(map[interface{}]bool)
+		w.items = make(map[any]bool)
 	}
 
 	if w.cond == nil {
@@ -25,8 +25,8 @@ func (w *Work) init() {
 	}
 }
 
-//
-func (w *Work) Add(item interface{}) {
+// Add adds a new item to the work queue
+func (w *Work) Add(item any) {
 	w.init()
 	w.cond.L.Lock()
 
@@ -41,7 +41,7 @@ func (w *Work) Add(item interface{}) {
 	w.cond.L.Unlock()
 }
 
-func (w *Work) Run(n int, f func(item interface{})) {
+func (w *Work) Run(n int, f func(item any)) {
 	if n < 1 {
 		panic("n < 1")
 	}

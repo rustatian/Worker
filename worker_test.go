@@ -15,7 +15,7 @@ func TestWorkParallel(t *testing.T) {
 		}
 		start := time.Now()
 		var n int32
-		w.Run(N, func(x interface{}) {
+		w.Run(N, func(x any) {
 			time.Sleep(1 * time.Millisecond)
 			atomic.AddInt32(&n, +1)
 		})
